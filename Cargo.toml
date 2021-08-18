@@ -1,0 +1,25 @@
+[package]
+name = "drogue-wasm"
+version = "0.1.0"
+edition = "2018"
+description = "Helper components for building WASM applications"
+documentation = "https://docs.rs/drogue-wasm"
+readme = "README.md"
+homepage = "https://drogue.io"
+repository = "https://github.com/drogue-iot/drogue-wasm"
+license = "Apache-2.0"
+keywords = ["embedded", "async", "no_std", "web"]
+exclude = [".github"]
+
+[dependencies]
+embassy = {git = "https://github.com/embassy-rs/embassy.git", rev = "4b74e8fc50b3b1839f118d9b310f793a46adc416", default-features = false }
+drogue-device = { git = "https://github.com/drogue-iot/drogue-device", rev = "e3daa54d71f71f952bc358faf6afa6170e72b00b", features = ["fonts", "log"], default-features = false }
+embedded-hal = { version = "0.2.4", features = ["unproven"] }
+wasm-bindgen = { version = "0.2.74" }
+wasm-bindgen-futures = { version = "0.4.24" }
+critical-section = { version = "0.2.1", features = ["custom-impl"] }
+web-sys = { version = "0.3.4", features = ['Document', 'Element', 'HtmlElement', 'Node', 'Window'] }
+
+# WASM dependencies
+#js-sys = { version = "0.3", optional = true }
+#wasm-logger = { version = "0.2.0", optional = true }
