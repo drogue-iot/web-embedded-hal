@@ -12,14 +12,7 @@ keywords = ["embedded", "async", "no_std", "web"]
 exclude = [".github"]
 
 [dependencies]
-embassy = {git = "https://github.com/embassy-rs/embassy.git", rev = "548593ea415c79472bd2cf2d0c59aadfcf5f715c", default-features = false }
-drogue-device = { git = "https://github.com/drogue-iot/drogue-device", rev = "cbf3f40e94edb6be252b9846dca02e95da45b7f8", features = ["fonts", "log"], default-features = false }
+embassy = {git = "https://github.com/embassy-rs/embassy.git", rev = "eff8ae9c4d93cdd44e27af653b16b339f03f11dd", default-features = false, features = ["executor-agnostic"] }
 embedded-hal = { version = "0.2.4", features = ["unproven"] }
-wasm-bindgen = { version = "0.2.74" }
-wasm-bindgen-futures = { version = "0.4.24" }
-critical-section = { version = "0.2.1", features = ["custom-impl"] }
+wasm-bindgen = { version = "0.2" }
 web-sys = { version = "0.3.4", features = ['Document', 'Element', 'HtmlElement', 'Node', 'Window'] }
-
-# WASM dependencies
-#js-sys = { version = "0.3", optional = true }
-#wasm-logger = { version = "0.2.0", optional = true }
