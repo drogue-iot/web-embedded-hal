@@ -2,7 +2,7 @@ use core::future::Future;
 use core::mem::MaybeUninit;
 use core::sync::atomic::{AtomicBool, Ordering};
 use embassy::traits::gpio::WaitForAnyEdge;
-use embassy::util::Signal;
+use embassy::channel::signal::Signal;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 

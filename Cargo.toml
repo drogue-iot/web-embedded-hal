@@ -12,7 +12,7 @@ keywords = ["embedded", "async", "no_std", "web"]
 exclude = [".github"]
 
 [dependencies]
-embassy = {git = "https://github.com/embassy-rs/embassy.git", rev = "eff8ae9c4d93cdd44e27af653b16b339f03f11dd", default-features = false, features = ["executor-agnostic"] }
-embedded-hal = { version = "0.2.4", features = ["unproven"] }
+embassy = {git = "https://github.com/embassy-rs/embassy.git", rev = "bb72f7eb98ed0431a6b6adf3c59831aed0c4825a", default-features = false, features = ["executor-agnostic"] }
+embedded-hal = { version = "0.2", features = ["unproven"] }
 wasm-bindgen = { version = "0.2" }
 web-sys = { version = "0.3.4", features = ['Document', 'Element', 'HtmlElement', 'Node', 'Window'] }
