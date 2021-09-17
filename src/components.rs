@@ -1,8 +1,8 @@
 use core::future::Future;
 use core::mem::MaybeUninit;
 use core::sync::atomic::{AtomicBool, Ordering};
-use embassy::traits::gpio::WaitForAnyEdge;
 use embassy::channel::signal::Signal;
+use embassy::traits::gpio::WaitForAnyEdge;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 
@@ -103,7 +103,7 @@ impl InputPin {
 pub struct OutputPin {
     high: AtomicBool,
     element: MaybeUninit<&'static str>,
-    transform: MaybeUninit<fn(bool) -> &'static str>,
+    transform: MaybeUninit<fn(bool) -> OutputVisual>,
 }
 
 impl OutputPin {
@@ -118,7 +118,7 @@ impl OutputPin {
     pub fn configure(
         &'static mut self,
         element: &'static str,
-        transform: fn(bool) -> &'static str,
+        transform: fn(bool) -> OutputVisual,
     ) {
         unsafe {
             let p = self.element.as_mut_ptr();
@@ -126,6 +126,7 @@ impl OutputPin {
             let f = self.transform.as_mut_ptr();
             f.write(transform);
         };
+        self.set_value(false);
     }
 
     pub fn set_value(&self, high: bool) {
@@ -135,7 +136,7 @@ impl OutputPin {
         let document = window.document().expect("should have a document on window");
         let txt = document.get_element_by_id(element).unwrap();
         let output = transform(high);
-        txt.set_inner_html(output);
+        txt.set_inner_html(output.as_ref());
     }
 }
 
@@ -157,5 +158,92 @@ impl<T: Send> Future for SignalFuture<'_, T> {
         cx: &mut core::task::Context<'_>,
     ) -> core::task::Poll<Self::Output> {
         self.signal.poll_wait(cx)
+    }
+}
+
+/// A led color.
+///
+/// Can be converted into a output visual by adding the boolean state:
+/// ```rust
+/// use drogue_wasm::{OutputVisual, LedColor};
+///
+/// let visual: OutputVisual = true + LedColor::Red;
+/// let transformer: fn(bool) -> OutputVisual = |state| state + LedColor::Red;
+/// ```
+pub enum LedColor {
+    Red,
+    Green,
+    Yellow,
+    Orange,
+    Blue,
+}
+
+impl std::ops::Add<LedColor> for bool {
+    type Output = OutputVisual;
+
+    fn add(self, rhs: LedColor) -> Self::Output {
+        OutputVisual::Led(rhs, self)
+    }
+}
+
+impl std::ops::Add<bool> for LedColor {
+    type Output = OutputVisual;
+
+    fn add(self, rhs: bool) -> Self::Output {
+        OutputVisual::Led(self, rhs)
+    }
+}
+
+pub enum OutputVisual {
+    String(&'static str),
+    Led(LedColor, bool),
+}
+
+macro_rules! to_led {
+    ($state:expr, $on:literal, $off:literal) => {
+        match $state {
+            true => concat!(
+                r#"<svg height="50" width="50"><circle cx="25" cy="25" r="10" fill=""#,
+                $on,
+                r#"" stroke-width="3" stroke=""#,
+                $off,
+                r#""/></svg>"#
+            ),
+            false => concat!(
+                r#"<svg height="50" width="50"><circle cx="25" cy="25" r="10" fill=""#,
+                $off,
+                r#"" /></svg>"#
+            ),
+        }
+    };
+}
+
+impl AsRef<str> for OutputVisual {
+    fn as_ref(&self) -> &str {
+        match self {
+            Self::String(s) => s,
+            Self::Led(c, state) => match c {
+                LedColor::Red => to_led!(state, "red", "darkred"),
+                LedColor::Green => to_led!(state, "lightgreen", "darkgreen"),
+                LedColor::Yellow => to_led!(state, "yellow", "#94a000"),
+                LedColor::Orange => to_led!(state, "orange", "#a97200"),
+                LedColor::Blue => to_led!(state, "lightblue", "darkblue"),
+            },
+        }
+    }
+}
+
+impl From<&'static str> for OutputVisual {
+    fn from(s: &'static str) -> Self {
+        OutputVisual::String(s)
+    }
+}
+
+impl From<bool> for OutputVisual {
+    fn from(v: bool) -> Self {
+        match v {
+            true => OutputVisual::String("ON"),
+            false => OutputVisual::String("OFF"),
+        }
     }
 }
