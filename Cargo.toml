@@ -16,3 +16,6 @@ embassy = { version = "0.1", default-features = false, features = ["executor-agn
 embedded-hal = { version = "0.2", features = ["unproven"] }
 wasm-bindgen = { version = "0.2" }
 web-sys = { version = "0.3.4", features = ['Document', 'Element', 'HtmlElement', 'Node', 'Window'] }
+
+[patch.crates-io]
+embassy = { git = "https://github.com/embassy-rs/embassy.git", rev = "a2e7c24e0055d13a61345dfce9fbe7fcf4e0d306" }
