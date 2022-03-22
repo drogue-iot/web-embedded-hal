@@ -1,8 +1,9 @@
 use core::future::Future;
 use core::mem::MaybeUninit;
 use core::sync::atomic::{AtomicBool, Ordering};
+use core::task::{Context, Poll};
 use embassy::channel::signal::Signal;
-use embassy::traits::gpio::WaitForAnyEdge;
+use embedded_hal_async::digital::Wait;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 
@@ -49,9 +50,32 @@ impl embedded_hal::digital::v2::InputPin for WebButton {
     }
 }
 
-impl WaitForAnyEdge for WebButton {
-    type Future<'a> = SignalFuture<'a, ()>;
-    fn wait_for_any_edge<'a>(&'a mut self) -> Self::Future<'a> {
+use core::convert::Infallible;
+impl embedded_hal_1::digital::ErrorType for WebButton {
+    type Error = Infallible;
+}
+
+impl Wait for WebButton {
+    type WaitForHighFuture<'m> = SignalFuture<'m, ()>;
+    fn wait_for_high<'m>(&'m mut self) -> Self::WaitForHighFuture<'m> {
+        self.pin.wait()
+    }
+
+    type WaitForLowFuture<'m> = SignalFuture<'m, ()>;
+    fn wait_for_low<'m>(&'m mut self) -> Self::WaitForLowFuture<'m> {
+        self.pin.wait()
+    }
+    type WaitForRisingEdgeFuture<'m> = SignalFuture<'m, ()>;
+    fn wait_for_rising_edge<'m>(&'m mut self) -> Self::WaitForRisingEdgeFuture<'m> {
+        self.pin.wait()
+    }
+    type WaitForFallingEdgeFuture<'m> = SignalFuture<'m, ()>;
+    fn wait_for_falling_edge<'m>(&'m mut self) -> Self::WaitForFallingEdgeFuture<'m> {
+        self.pin.wait()
+    }
+
+    type WaitForAnyEdgeFuture<'m> = SignalFuture<'m, ()>;
+    fn wait_for_any_edge<'m>(&'m mut self) -> Self::WaitForAnyEdgeFuture<'m> {
         self.pin.wait()
     }
 }
@@ -151,13 +175,14 @@ impl<'s, T: Send> SignalFuture<'s, T> {
 }
 
 impl<T: Send> Future for SignalFuture<'_, T> {
-    type Output = T;
-
-    fn poll(
-        self: core::pin::Pin<&mut Self>,
-        cx: &mut core::task::Context<'_>,
-    ) -> core::task::Poll<Self::Output> {
-        self.signal.poll_wait(cx)
+    type Output = Result<T, Infallible>;
+    fn poll(self: core::pin::Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+        let result = self.signal.poll_wait(cx);
+        if let Poll::Ready(r) = result {
+            Poll::Ready(Ok(r))
+        } else {
+            Poll::Pending
+        }
     }
 }
 
