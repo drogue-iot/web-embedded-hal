@@ -1,12 +1,12 @@
 [package]
-name = "wasm-embedded-hal"
+name = "web-embedded-hal"
 version = "0.1.0"
 edition = "2018"
-description = "WASM embedded-hal components"
-documentation = "https://docs.rs/wasm-embedded-hal"
+description = "Web embedded-hal components"
+documentation = "https://docs.rs/web-embedded-hal"
 readme = "README.md"
 homepage = "https://drogue.io"
-repository = "https://github.com/drogue-iot/wasm-embedded-hal"
+repository = "https://github.com/drogue-iot/web-embedded-hal"
 license = "Apache-2.0"
 keywords = ["embedded", "async", "no_std", "web"]
 exclude = [".github"]

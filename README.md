@@ -1,3 +1,3 @@
-# WASM Embedded Hal
+# Web Embedded Hal
 
-wasm-embedded-hal is an implementation of embedded-hal traits for web components 
+web-embedded-hal is an implementation of embedded-hal traits for web components 
