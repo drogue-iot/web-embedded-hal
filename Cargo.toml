@@ -1,23 +1,21 @@
 [package]
-name = "drogue-wasm"
+name = "wasm-embedded-hal"
 version = "0.1.0"
 edition = "2018"
-description = "Helper components for building WASM applications"
-documentation = "https://docs.rs/drogue-wasm"
+description = "WASM embedded-hal components"
+documentation = "https://docs.rs/wasm-embedded-hal"
 readme = "README.md"
 homepage = "https://drogue.io"
-repository = "https://github.com/drogue-iot/drogue-wasm"
+repository = "https://github.com/drogue-iot/wasm-embedded-hal"
 license = "Apache-2.0"
 keywords = ["embedded", "async", "no_std", "web"]
 exclude = [".github"]
 
 [dependencies]
-embassy = { version = "0.1", default-features = false, features = ["wasm", "nightly"] }
 embedded-hal = { version = "0.2", features = ["unproven"] }
 wasm-bindgen = { version = "0.2" }
 web-sys = { version = "0.3.4", features = ['Document', 'Element', 'HtmlElement', 'Node', 'Window'] }
-embedded-hal-1 = { package = "embedded-hal", version = "1.0.0-alpha.7", git = "https://github.com/embassy-rs/embedded-hal", branch = "embassy2" }
-embedded-hal-async = { version = "0.0.1", git = "https://github.com/embassy-rs/embedded-hal", branch = "embassy2" }
-
-[patch.crates-io]
-embassy = { git = "https://github.com/embassy-rs/embassy.git", rev = "da9c0efaad594b48cfcdf641d353133d14cf98fe" }
+embedded-hal-1 = { package = "embedded-hal", version = "1.0.0-alpha.8" }
+embedded-hal-async = { version = "0.1.0-alpha.1" }
+critical-section = "0.2.7"
+futures = "0.3"
